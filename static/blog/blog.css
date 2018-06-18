@@ -1,0 +1,172 @@
+ul.blog-types {
+	list-style-type: none;
+}
+
+div.blog:not(:last-child){
+	margin-bottom: 2em;
+	padding-bottom: 1em;
+	border-bottom: 1px solid #eee;
+}
+
+div#list_row {
+	margin-top: 70px;
+}
+
+div.blog h3 {
+	margin-top:0.5em;
+}
+
+div.blog p.blog-info {
+	margin-bottom: 0;
+}
+
+ul.blog-info-description {
+	list-style-type: none;
+	margin-bottom: 1em;
+}
+
+ul.blog-info-description li{
+	display: inline-block;
+	margin-right: 1em;
+}
+
+div.blog-content {
+	text-indent: 2em;
+    margin-bottom: 2em;
+    font-size: 12px;
+}
+
+div.paginator {
+	text-align: center;
+}
+
+div.blog-more {
+	margin-top: 1em;
+}
+
+div.comment-area {
+    margin-top: 2em;
+}
+
+h3.comment-area-title {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 0.4em;
+}
+
+div.django-ckeditor-widget {
+    width: 100%;
+}
+
+div.comment {
+	border-bottom: 1px dashed #ccc;
+	margin-bottom: 0.5em;
+	padding-bottom: 0.5em;
+}
+
+div.reply {
+	margin-left: 2em;
+}
+
+div#reply_comment_container{
+    border: 1px solid #d1d1d1;
+    background-color: #f8f8f8;
+    border-bottom: none;
+    padding: 1em 1em 0.5em;
+}
+
+p#reply_title {
+	border-bottom: 1px dashed #ccc;
+	padding-bottom: 0.5em;
+}
+
+div.like {
+    color: #337ab7;
+    cursor: pointer;
+    display: inline-block;
+    padding: 0.5em 0.3em;
+}
+
+div.like .active {
+    color: #f22;
+}
+
+/*---------------*/
+/***** Julia *****/
+/*---------------*/
+
+.effect-julia {
+    background: ;
+}
+
+.effect-julia img {
+    -webkit-transition: opacity 1s, -webkit-transform 1s;
+    transition: opacity 1s, transform 1s;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+.effect-julia figcaption {
+    text-align: left;
+}
+
+.effect-julia h2 {
+    position: relative;
+    padding: 0.5em 0;
+}
+
+.effect-julia p {
+    display: inline-block;
+    margin: 0 0 0.25em;
+    padding: 0.4em 1em;
+    background: rgba(255,255,255,0.9);
+    color: #2f3238;
+    text-transform: none;
+    font-weight: 500;
+    font-size: 75%;
+    -webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
+    transition: opacity 0.35s, transform 0.35s;
+    -webkit-transform: translate3d(-360px,0,0);
+    transform: translate3d(-360px,0,0);
+}
+
+.effect-julia p:first-child {
+    -webkit-transition-delay: 0.15s;
+    transition-delay: 0.15s;
+}
+
+.effect-julia p:nth-of-type(2) {
+    -webkit-transition-delay: 0.1s;
+    transition-delay: 0.1s;
+}
+
+.effect-julia p:nth-of-type(3) {
+    -webkit-transition-delay: 0.05s;
+    transition-delay: 0.05s;
+}
+
+.effect-julia:hover p:first-child {
+    -webkit-transition-delay: 0s;
+    transition-delay: 0s;
+}
+
+.effect-julia:hover p:nth-of-type(2) {
+    -webkit-transition-delay: 0.05s;
+    transition-delay: 0.05s;
+}
+
+.effect-julia:hover p:nth-of-type(3) {
+    -webkit-transition-delay: 0.1s;
+    transition-delay: 0.1s;
+}
+
+.effect-julia:hover img {
+    opacity: 0.4;
+    -webkit-transform: scale3d(1.1,1.1,1);
+    transform: scale3d(1.1,1.1,1);
+}
+
+.effect-julia:hover p {
+    opacity: 1;
+    -webkit-transform: translate3d(0,0,0);
+    transform: translate3d(0,0,0);
+}

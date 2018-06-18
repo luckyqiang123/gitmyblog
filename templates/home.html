@@ -1,0 +1,348 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    张志强的博客
+{% endblock %}
+
+{% block header_extends %}
+    <link rel="stylesheet" href="{% static 'css/home.css'%}">    
+    <script src="{% static 'js/holder.js' %}"></script> 
+{% endblock %}
+
+{% block nav_home_active %}active{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div id="all_col" class="row">
+            <div id="left-col" class="col-md-2"> 
+                <div id="intrudeless" class="intrude-less">
+                    <header id="header" class="inner"> 
+                        <a href="http://luckyqiang.top/" class="profilepic">
+                            <img src="../static/img/avatar.jpg" class="js-avatar" style="width: 100%;height: 100%;opacity: 1;">
+                        </a>
+                        <hgroup>
+                        <h1 class="header-author"><a href="/">Luckyqiang</a></h1>
+                        </hgroup>
+                        <p class="header-subtitle">World is powered by solitude!</p>
+                        <div id="switch-btn" class="hidden-sm hidden-xs switch-btn">
+                            <div class="icon">
+                                <div class="icon-ctn">
+                                    <div id="data-idx0" class="icon-wrap icon-house">
+                                        <div class="birdhouse"></div>
+                                        <div class="birdhouse_holes"></div>
+                                    </div>
+                                    <div id="data-idx1" class="icon-wrap icon-ribbon">
+                                        <div class="ribbon"></div>
+                                    </div>
+                                    
+                                    <div id="data-idx2" class="icon-wrap icon-link">
+                                        <div class="loopback_l"></div>
+                                        <div class="loopback_r"></div>
+                                    </div>
+                                    <div id="data-idx3" class="icon-wrap icon-me">
+                                        <div class="user"></div>
+                                        <div class="shoulder"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tips-box" data-toggle="tooltip" data-placement="left">
+                                <div class="tips-arrow"></div>
+                                <ul class="tips-inner">
+                                    <li>菜单</li>
+                                    <li>标签</li>
+                                    <li>友情链接</li>
+                                    <li>关于我</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div id="switch-area" class="switch-area">
+                            <div class="switch-wrap">
+                                <section class="switch-part switch-part1">
+                                    <nav class="header-nav">
+                                        <ul class="social">
+                                            <li><a class="fl github" target="_blank" href="https://github.com/luckyqiang123">github</a></li>
+                                            <li><a class="fl weibo" target="_blank" href="https://weibo.com/3512960770">weibo</a></li>
+                                            <li><a class="fl netease" target="_blank" href="http://music.163.com/#/user/home?id=37041521">rss</a></li>
+                                            <li><a class="fl mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=CDk9MT09PDk_OjlIeXkma2dl">mail</a></li>
+                                        </ul>
+                                    </nav>
+                                </section>
+                            </div>
+                            
+                        </div>
+                    </header>
+                </div>
+            </div>
+            <div class="col-md-8 col-md-offset-2">
+                
+                <div class="demo">
+                    <div class="row">
+                        <div class="col-md-10 col-md-offset-1">
+                            <div class="tab" role="tabpanel">
+                            <!-- Nav tabs -->
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">博文阅读统计</a></li>
+                                    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">今日热门博客</a></li>
+                                    <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">昨日热门博客</a></li>
+                                    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">七天热门博客</a></li>
+                                </ul>
+
+                            <!-- Tab panes -->
+                                <div class="tab-content tabs"> 
+                                    <div role="tabpanel" class="tab-pane fade in active" id="home">
+                                        <!-- 图表容器 DOM -->
+                                        <div id="container" class="container-fluid"></div>
+                                    </div>
+                                    <div role="tabpanel" class="tab-pane fade" id="profile">
+                                        <div class="hot-data">
+                                            <h3>今天热门博客</h3>
+                                            <ul>
+                                                {% for hot_data in today_hot_data %}
+                                                    <li>
+                                                        <span class="glyphicon glyphicon-fire">{{ hot_data.read_num }}</span>
+                                                        <a href="{% url 'blog_detial' hot_data.content_object.pk %}">{{ hot_data.content_object.title }}</a>
+                                                    </li>           
+                                                {% empty %}
+                                                    <li>今天暂无热门博客</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div role="tabpanel" class="tab-pane fade" id="messages">
+                                        <div class="hot-data">
+                                            <h3>昨天热门博客</h3>
+                                            <ul>
+                                                {% for hot_data in yesterday_hot_data %}
+                                                    <li>
+                                                        <span class="glyphicon glyphicon-fire">{{ hot_data.read_num }}</span>
+                                                        <a href="{% url 'blog_detial' hot_data.content_object.pk %}">{{ hot_data.content_object.title }}</a>
+                                                    </li>            
+                                                {% empty %}
+                                                    <li>昨天暂无热门博客</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div role="tabpanel" class="tab-pane fade" id="settings">
+                                        <div class="hot-data">
+                                            <h3>七天热门博客</h3>
+                                            <ul>
+                                                {% for hot_blog in hot_blogs_for_7_days %}
+                                                    <li>
+                                                        <span class="glyphicon glyphicon-fire">{{ hot_blog.read_num_sum }}</span>
+                                                        <a href="{% url 'blog_detial' hot_blog.id %}">{{ hot_blog.title }}</a>
+                                                    </li>            
+                                                {% empty %}
+                                                    <li>七天暂无热门博客</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+            <div class="hidden-xs col-md-2">
+                <div class="butauthor author">
+                    <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=auto height=450 src="//music.163.com/outchain/player?type=0&id=117291828&auto=1&height=430"></iframe>
+                </div>
+                <div class="butauthor author">
+                    <li> <span class="bignum" ID="bignum1">{{ blog_nums }}</span>文章总数 </li>
+                    <li> <span class="bignum">703</span>访问次数 </li>
+                    <li> <span class="bignum" ID="days"></span>建站天数 </li>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('container'));
+
+        // 指定图表的配置项和数据
+        option = {
+            backgroundColor: '',
+            title: {
+                text: '近7天博客阅读次数',
+                show: false,
+                textStyle: {
+                    fontWeight: 'normal',
+                    fontSize: 16,
+                    color: '#333'
+                },
+                left: '6%'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    lineStyle: {
+                        type: 'dotted'
+                    }
+                }
+            },
+            legend: {
+                icon: 'rect',
+                itemWidth: 14,
+                itemHeight: 5,
+                itemGap: 13,
+                data: ['近7天博客阅读次数'],
+                right: 'center',
+                textStyle: {
+                    fontSize: 12,
+                    color: '#333'
+                }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: [{
+                type: 'category',
+                boundaryGap: false,
+                axisLine: {
+                    lineStyle: {
+                        color: '#ccc'
+                    }
+                },
+                axisLabel: {
+                    margin: 10,
+                    textStyle: {
+                        fontSize: 14,
+                        color: '#999'
+                    }
+                },
+                data: {{ dates|safe }}
+            }],
+            yAxis: [{
+                type: 'value',
+                name: '',
+                axisTick: {
+                    show: false
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: '#fff'
+                    }
+                },
+                axisLabel: {
+                    margin: 10,
+                    textStyle: {
+                        fontSize: 14,
+                        color: '#999'
+                    }
+                },
+                splitLine: {
+                    lineStyle: {
+                        type: 'dotted',
+                        color: '#ccc'
+                    }
+                }
+            }],
+            series: [{
+                name: '近7天博客阅读次数',
+                type: 'line',
+                smooth: true,
+                symbol: 'circle',
+                symbolSize: 5,
+                showSymbol: false,
+                lineStyle: {
+                    normal: {
+                        width: 1
+                    }
+                },
+                areaStyle: {
+                    normal: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                            offset: 0,
+                            color: 'rgba(0, 136, 212, 0.2)'
+                        }, {
+                            offset: 1,
+                            color: 'rgba(0, 136, 212, 0)'
+                        }], false),
+                        shadowColor: 'rgba(0, 0, 0, 0.1)',
+                        shadowBlur: 10
+                    }
+                },
+                itemStyle: {
+                    normal: {
+                        color: 'rgb(0,136,212)',
+                        borderColor: 'rgba(0,136,212,0.2)',
+                        borderWidth: 12
+
+                    }
+                },
+                data: {{ read_nums }}
+            }, ]
+        }
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+
+        // 图表配置
+        
+
+        //窗体改变大小事件1
+        $(window).resize(function(){
+                //正文宽度
+                var body_width = $(document.body).outerWidth(true);
+                //判断并调整底部元素的样式
+                if($("#left-col").hasClass('col-md-3-abs')){
+                    //若包含有page-bottom类，就应用了position设置
+                    //当position为absolute时，body高度不包含这个元素
+                    //所以页面高度需要判断body和footer之和若小于浏览器窗口
+                    //则移除样式，让footer自然跟随在正文后面
+                    if(body_width < 999){
+                        $("#left-col").removeClass('col-md-3-abs');
+                    }
+                }else{
+                    //若没有page-bottom类，body高度包含footer
+                    //判断body高度小于浏览器时，则悬浮于底部
+                    if(body_width >= 999){
+                        $("#left-col").addClass('col-md-3-abs');
+                    }
+                }
+            });
+ 
+            //页面加载时，模拟触发一下resize事件
+            $(window).trigger('resize');
+
+        //窗体改变大小事件2
+        $(window).resize(function(){
+                //正文宽度
+                var body_width = $(document.body).outerWidth(true);
+                //判断并调整底部元素的样式
+                
+                if(body_width < 999){
+                    $("#intrudeless").addClass('intrude-less-abs');    
+                }else{
+                    //若没有page-bottom类，body高度包含footer
+                    //判断body高度小于浏览器时，则悬浮于底部
+                    
+                    $("#intrudeless").removeClass('intrude-less-abs');
+                    }
+            });
+ 
+            //页面加载时，模拟触发一下resize事件
+            $(window).trigger('resize');
+
+        $(document).ready(function(){
+            $(".tips-inner li").click(function(){
+                var order = $(".tips-inner li").index(this);//获取点击之后返回当前a标签index的值
+                console.log(order);
+                $("#data-idx" + order).show().siblings("div").hide();//显示id中data-idx加上返回值所对应的DIV
+            });
+        })
+    
+        //建站时间    
+        var s1 = '2018-02-20';//设置为你的建站时间
+        s1 = new Date(s1.replace(/-/g, "/"));
+        s2 = new Date();
+        var days = s2.getTime() - s1.getTime();
+        var number_of_days = parseInt(days / (1000 * 60 * 60 * 24));
+        document.getElementById('days').innerHTML = number_of_days;
+    </script>
+{% endblock %}

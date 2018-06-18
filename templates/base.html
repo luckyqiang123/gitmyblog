@@ -1,0 +1,323 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{% block title %}{% endblock %}</title>
+    
+    <link rel="stylesheet" href="{% static 'css/base.css'%}">
+    <link rel="stylesheet" href="{% static 'css/zoomify.css'%}">
+    <link rel="stylesheet" href="{% static 'css/myRewards.css' %}">
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    
+    <script src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.1.0/echarts.min.js"></script>
+    
+    {% block header_extends %}{% endblock %}
+</head>
+<body>
+    <div class="loading">
+        <div class="pic">
+            <span></span>
+            <b>0%</b>
+        </div>
+    </div>  
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="{% url 'home' %}"> 
+                    张志强的博客
+                </a>
+                
+                <button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>                   
+                </button>
+            </div>
+
+                <div id="navbar-collapse" class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="{% block nav_home_active %}{% endblock %}">  
+                            <a href="{% url 'home' %}">
+                                <sapn class="glyphicon glyphicon-home"></sapn>
+                                首页
+                            </a>
+                        </li>
+                        <li class="{% block nav_blog_active %}{% endblock %}">
+                            <a href="{% url 'blog_list' %}">
+                                <sapn class="glyphicon glyphicon-pencil"></sapn>
+                                博客
+                            </a>
+                        </li>
+                        <li class="{% block nav_about_me_active %}{% endblock %}">
+                            <a href="{% url 'about_me' %}">
+                                <sapn class="glyphicon glyphicon-user"></sapn>
+                                关于我
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- <form action="" class="navbar-form navbar-right">
+                        <input type="text" placeholder="搜索博文" class="form-control">
+                        <button type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </form> -->
+
+                    <ul id="user_part" class="nav navbar-nav navbar-right">
+                        {% if not user.is_authenticated %}
+                            <li><a href="{% url 'login' %}?from={{ request.get_full_path }}">登录</a></li>
+                            <li><a href="{% url 'register' %}?from={{ request.get_full_path }}">注册</a></li>
+                        {% else %}
+
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                                    <img class="navbar-header navbar-avatar" src="{{ user.get_avatar_url }}">
+                                    {% if user.has_nickname %}
+                                        {{ user.username }}({{ user.get_nickname }})<span class="caret"></span>
+                                    {% else %}
+                                        {{ user.username }}
+                                    {% endif %}
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="{% url 'user_info' %}">个人资料</a></li>
+                                    <li><a href="{% url 'change_password' %}">修改密码</a></li>
+                                    {% if user.is_staff or user.is_superuser %}
+                                        <li><a href="{% url 'admin:index' %}">后台管理</a></li>
+                                    {% endif %}
+                                    <li><a href="{% url 'logout' %}?from={{ request.get_full_path }}">退出</a></li> 
+                                </ul>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                      
+        </div>
+    </div>
+  
+    {% block content %}{% endblock %}
+    <!-- Modal -->
+    <div class="modal fade" id="login_modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <form id="login_modal_form" action="" method="POST">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">登录</h4>
+                    </div>
+                    <div class="modal-body">
+                        {% csrf_token %}
+                        {% for field in login_modal_form %}
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                        {% endfor %}
+                        <span id="login_modal_tip" class="text-danger"></span>   
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">登录</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>     
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+   
+    <div id="footer" class="page-bottom">
+
+        <div class="copyright">
+            <span>
+                Copyright &copy; luckyqiang.cn  备案号:
+                <a href="http://www.miitbeian.gov.cn/">粤ICP备18040023号-1</a>
+            </span>
+        </div>        
+    </div>
+    <a id="scrolltop" class="gotop" href="javascript:void(0)" title="返回顶部"></a>
+    <script>
+        // Modal
+        $("#login_modal_form").submit(function(event){
+            event.preventDefault();
+            $.ajax({
+                url: '{% url "login_for_modal" %}',
+                type: 'POST',
+                data: $(this).serialize(),
+                cache: false,
+                success: function(data){
+                    if(data['status']=='SUCCESS'){
+                        window.location.reload();
+                    }else{
+                        $("#login_modal_tip").text('用户名或密码不正确');
+                    }
+                }
+            });
+        });
+
+        //公告
+        window.tctipConfig = {
+            //最上面的文字
+            headText: "欢迎打赏支持我 ^_^",
+            //侧边栏文本
+            siderText: "公告 & 打赏",
+            //侧边栏文本高度调整
+            siderTextTop: "-72px",
+            //侧边栏背景颜色
+            siderBgcolor: "#323d45",
+            //整个侧边栏的高度设置可以px，em，或百分比
+            siderTop:"118px",
+            //底部文字
+            buttomText:"了解更多",
+            //底部文字链接
+            buttomLink:"https://github.com/haddyyang/tctip",
+
+            list:{
+                notice: {icon: "{% static 'img/icon/tip.png' %}", name:"公告栏", className:"myRewards-text", text: '获取公告中……'},
+                alipay: {icon: "{% static 'img/icon/alipay.png' %}", name:"支付宝", desc: "用支付宝打赏luckyqiang", qrimg: "{% static 'img/qr/zhifubao.jpg' %}"},
+                weixin: {icon: "{% static 'img/icon/weixin.png' %}", name:"微信", desc: "用微信打赏luckyqiang", qrimg: "{% static 'img/qr/weixin.jpg' %}"} 
+            }
+        };
+        /*
+            VIEWPORT BUG FIX
+            iOS viewport scaling bug fix, by @mathias, @cheeaun and @jdalton
+        */
+        (function(doc){var addEvent='addEventListener',type='gesturestart',qsa='querySelectorAll',scales=[1,1],meta=qsa in doc?doc[qsa]('meta[name=viewport]'):[];function fix(){meta.content='width=device-width,minimum-scale='+scales[0]+',maximum-scale='+scales[1];doc.removeEventListener(type,fix,true);}if((meta=meta[meta.length-1])&&addEvent in doc){fix();scales=[.25,1.6];doc[addEvent](type,fix,true);}}(document));
+    </script>
+    
+    <script src="{% static 'js/tctip.min.js' %}"></script>
+    <script src="{% static 'js/zoomify.js' %}"></script>  
+    <script src="{% static 'bootstrap-3.3.7/js/bootstrap.min.js' %}"></script>
+    {% block script_extends %}{% endblock %}
+    <script>
+        //loading
+        $(function(){
+            var img=$("img");
+            var num=0;
+            img.each(function(i){
+                var oImg=new Image();
+                oImg.onload=function(){
+                    oImg.onload=null;
+                    num++;
+                    $(".loading b").html(parseInt(num/$("img").size()*100)+"%");
+                    if(num>=i) {
+                        $(".loading").fadeOut();
+                    }
+                }
+                oImg.src=img[i].src;
+            })
+        })
+
+        //点击特效
+        var a_idx = 0;
+        $("body").click(function(e) {
+            var a = new Array("天真","富强", "民主", "文明", "和谐", "自由", "平等", "公正" ,"法治", "爱国", "敬业", "诚信", "友善");
+            var $i = $("<span/>").text(a[a_idx]);
+            a_idx = (a_idx + 1) % a.length;
+            var x = e.pageX,
+            y = e.pageY;
+            $i.css({
+                "z-index": 999999999999999999999999999999999999999999999999999999999999999999999,
+                "top": y - 20,
+                "left": x,
+                "position": "absolute",
+                "font-weight": "bold",
+                "color": "#ff6651"
+            });
+            $("body").append($i);
+            $i.animate({
+                "top": y - 180,
+                "opacity": 0
+            },
+            1500,
+            function() {
+                $i.remove();
+            });
+        });
+        
+        $.ajax({
+            type:"GET",
+            url:"{% url 'get_notice' %}",
+            cache:false,
+            dataType:'json',
+            success:function(data){
+                var notice;
+                if(data['code']=='0'){
+                    notice = data['notice'];
+                }else{
+                    notice='暂无公告';
+                };
+                
+                //设置当前公告(当前显示)
+                $('.myRewards-text').html(notice);
+                //设置公告数据(切换的时候显示)
+                tctipConfig.list.notice.text=notice;
+            }
+        });
+
+        $(function(){
+            //滚动事件返回顶部
+            $('#scrolltop').on('click', move);
+            $(window).scroll(function(){
+                checkPosition($(window).height());  
+            });
+            checkPosition($(window).height());
+
+            //点击返回头部效果
+            function move(){
+                $("html,body").animate({scrollTop:0});
+            };
+            function checkPosition(pos){
+                var top=$(window).scrollTop();
+                var navbar = $(".navbar-fixed-top");
+                if(top==0){
+                    $(".navbar-fixed-top").removeClass("navbar-down");
+                }else{
+                    $(".navbar-fixed-top").addClass("navbar-down");
+                }
+                if(top>350){
+                    $("#scrolltop").fadeIn();
+                }else{
+                    $("#scrolltop").fadeOut();
+                }
+            }
+
+            //设置页脚 窗体改变大小事件
+            $(window).resize(function(){
+                //正文高度
+                var body_height = $(document.body).outerHeight(true);
+ 
+                //底部元素高度
+                var bottom_height = $("#footer").outerHeight(true);
+ 
+                //浏览器页面高度
+                var window_height = $(window).height();
+                // console.log(body_height);
+                // console.log(bottom_height);
+                // console.log(window_height);
+                
+                //判断并调整底部元素的样式
+                if($("#footer").hasClass('page-bottom-abs')){
+                    //若包含有page-bottom类，就应用了position设置
+                    //当position为absolute时，body高度不包含这个元素
+                    //所以页面高度需要判断body和footer之和若小于浏览器窗口
+                    //则移除样式，让footer自然跟随在正文后面
+                    if(body_height + bottom_height >= window_height){
+                        $("#footer").removeClass('page-bottom-abs');
+                    }
+                }else{
+                    //若没有page-bottom类，body高度包含footer
+                    //判断body高度小于浏览器时，则悬浮于底部
+                    if(body_height < window_height){
+                        $("#footer").addClass('page-bottom-abs');
+                    }
+                }
+            });
+ 
+            //页面加载时，模拟触发一下resize事件
+            $(window).trigger('resize');
+            console.log("%c Love Teemo %c Copyright \xa9 %s", 'font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;font-size:64px;color:#00bbee;-webkit-text-fill-color:#00bbee;-webkit-text-stroke: 1px #00bbee;', "font-size:12px;color:#999999;", (new Date).getFullYear());
+        });
+    </script>
+    
+</body>
+</html>
